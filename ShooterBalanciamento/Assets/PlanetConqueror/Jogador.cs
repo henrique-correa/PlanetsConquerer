@@ -36,21 +36,31 @@ public class Jogador : MonoBehaviour {
 
 	void Jogador_move(){
 		move_X = Input.GetAxis("Horizontal") * velocidade_X;
-		transform.Translate(move_X,0,0);
+		//transform.Translate(move_X,0,0);
 		
 		move_Y = Input.GetAxis("Vertical") * velocidade_Y;
-		transform.Translate(0,0,move_Y);
+		//transform.Translate(0,0,move_Y);
 
+		gameObject.GetComponent<Rigidbody>().velocity = new Vector3 (move_X, 0, move_Y) ;
 	}
 
 	void Jogdor_atira(){
 		if(Time.time > Jogador_proximo_tiro){
 			Jogador_proximo_tiro = Time.time + Jogador_cadencia_tiro;
+			float Jog_vel_tiro;
+
 			GameObject Jogador_tiro = Instantiate(Resources.Load("Jogador_tiro"),transform.position,Quaternion.identity) as GameObject;
 			Physics.IgnoreCollision(gameObject.GetComponent<Rigidbody>().GetComponent<Collider>() , Jogador_tiro.GetComponent<Rigidbody>().GetComponent<Collider>());
-			Jogador_tiro.GetComponent<Rigidbody>().velocity = Jog.GetComponent<Rigidbody>().velocity;
-			Jogador_tiro.GetComponent<Rigidbody>().velocity += new Vector3(0.0f,0.0f,1.0f) * Jogador_velocidade_tiro;
-			//Jogador_tiro.GetComponent<Rigidbody>().velocity = new Vector3 (0.0f,0.0f,1.0f) * Jogador_velocidade_tiro;
+
+			if(gameObject.GetComponent<Rigidbody>().velocity.z < 0){
+				Jog_vel_tiro = Jogador_velocidade_tiro;
+			}
+			else{
+				Jog_vel_tiro = Jogador_velocidade_tiro + gameObject.GetComponent<Rigidbody>().velocity.z;
+			}
+
+			Jogador_tiro.GetComponent<Rigidbody>().velocity += new Vector3(0.0f,0.0f,1.0f) * Jog_vel_tiro;
+
 		}
 	}
 }
